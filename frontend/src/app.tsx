@@ -1,82 +1,8 @@
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
-import {
-    useEffect,
-    useRef,
-    useState,
-    type ComponentProps,
-    type SubmitEvent,
-} from "react";
-import MarkdownContainer from "react-markdown";
-import remarkGfm from "remark-gfm";
-
-function Markdown({ ...props }: ComponentProps<typeof MarkdownContainer>) {
-    return (
-        <MarkdownContainer
-            remarkPlugins={[remarkGfm]}
-            components={{
-                td: (props) => (
-                    <td
-                        className="border border-zinc-50 px-2 py-1"
-                        {...props}
-                    />
-                ),
-                p: (props) => <p className="my-4" {...props} />,
-                ul: (props) => (
-                    <ul className="list-disc list-inside" {...props} />
-                ),
-            }}
-            {...props}
-        />
-    );
-}
-
-async function serverFetch(path: string, method: string, body?: any) {
-    return fetch(`/server${path}`, {
-        method,
-        body: body ? JSON.stringify(body) : undefined,
-        headers: body
-            ? {
-                  "Content-Type": "application/json",
-              }
-            : undefined,
-    });
-}
-
-async function sendMessage(message: string) {
-    const response = await serverFetch("/message", "POST", { message });
-
-    return (await response.json()).response as Message;
-}
-
-async function createSession() {
-    await serverFetch("/create-session", "POST");
-}
-
-async function getHistory() {
-    const response = await serverFetch("/history", "GET");
-    return response.json() as Promise<Message[]>;
-}
-
-interface Message {
-    role: "user" | "assistant";
-    content: { text: string }[];
-}
-
-function Message({ message }: { message: Message }) {
-    const isUser = message.role == "user";
-
-    const content = message.content.map(({ text }) => text).join("");
-
-    return (
-        <li className={isUser ? "ml-auto text-right" : ""}>
-            <div>{isUser ? "You" : "FinRec"}</div>
-            <div
-                className={`${isUser ? "bg-zinc-50 text-zinc-900 rounded-tr-none" : "bg-zinc-700 rounded-tl-none"} px-4 py-2 rounded-lg`}>
-                <Markdown>{content}</Markdown>
-            </div>
-        </li>
-    );
-}
+import { useState, type SubmitEvent } from "react";
+import type { Message } from "./types";
+import { MessageList } from "./message-list";
+import { createSession, getHistory, sendMessage } from "./server";
 
 await createSession();
 const initialHistory = await getHistory();
@@ -84,14 +10,6 @@ const initialHistory = await getHistory();
 export function App() {
     const [history, setHistory] = useState<Message[]>(initialHistory);
     const [message, setMessage] = useState("");
-    const messageContainerRef = useRef<HTMLOListElement>(null);
-
-    function scrollToBottom() {
-        messageContainerRef.current?.scrollTo({
-            top: messageContainerRef.current.scrollHeight,
-            behavior: "smooth",
-        });
-    }
 
     async function handleMessage(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -108,19 +26,11 @@ export function App() {
         setHistory((previous) => [...previous, response]);
     }
 
-    useEffect(scrollToBottom, [history]);
-
     return (
         <div className="flex w-full h-screen bg-zinc-900 text-zinc-50 p-8 gap-8">
             <div className="grow bg-zinc-800 rounded-2xl border border-zinc-700 p-8"></div>
             <div className="max-w-xl w-full bg-zinc-800 rounded-2xl border border-zinc-700 p-8 flex flex-col gap-4">
-                <ol
-                    className="flex flex-col grow gap-2 overflow-scroll"
-                    ref={messageContainerRef}>
-                    {history.map((message, index) => (
-                        <Message message={message} key={index} />
-                    ))}
-                </ol>
+                <MessageList messages={history} />
                 <form onSubmit={handleMessage} className="flex flex-col">
                     <textarea
                         className="border border-zinc-600 rounded-lg focus:outline-none focus:border-zinc-200 p-4"
