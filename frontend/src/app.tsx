@@ -11,12 +11,24 @@ async function getFile(name: string) {
 
 const files: File[] = [
     {
-        filename: "File A",
-        content: await getFile("fileA.md"),
+        filename: "Readme",
+        content: await getFile("00_readme.md"),
     },
     {
-        filename: "File B",
-        content: await getFile("fileA.md"),
+        filename: "Case Lindstrand",
+        content: await getFile("01_case_lindstrand.md"),
+    },
+    {
+        filename: "Ground Truth",
+        content: await getFile("02_ground_truth.md"),
+    },
+    {
+        filename: "Injections",
+        content: await getFile("03_injections.md"),
+    },
+    {
+        filename: "Reference Memos",
+        content: await getFile("04_reference_memos.md"),
     },
 ];
 
