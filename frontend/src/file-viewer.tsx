@@ -22,7 +22,7 @@ export function FileViewer({ files }: { files: File[] }) {
                     </li>
                 ))}
             </ul>
-            <div className="bg-zinc-800 border border-zinc-700 rounded-2xl p-8 grow">
+            <div className="bg-zinc-800 border border-zinc-700 rounded-2xl p-8 grow overflow-auto">
                 <Markdown>
                     {files.find((file) => file.filename == activeFile)?.content}
                 </Markdown>
