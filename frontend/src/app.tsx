@@ -2,7 +2,23 @@ import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { useState, type SubmitEvent } from "react";
 import type { Message } from "./types";
 import { MessageList } from "./message-list";
-import { createSession, getHistory, sendMessage } from "./server";
+import { createSession, getHistory, sendMessage, serverFetch } from "./server";
+import { FileViewer, type File } from "./file-viewer";
+
+async function getFile(name: string) {
+    return await serverFetch(`/files/${name}`).then((res) => res.text());
+}
+
+const files: File[] = [
+    {
+        filename: "File A",
+        content: await getFile("fileA.md"),
+    },
+    {
+        filename: "File B",
+        content: await getFile("fileA.md"),
+    },
+];
 
 await createSession();
 const initialHistory = await getHistory();
@@ -28,7 +44,7 @@ export function App() {
 
     return (
         <div className="flex w-full h-screen bg-zinc-900 text-zinc-50 p-8 gap-8">
-            <div className="grow bg-zinc-800 rounded-2xl border border-zinc-700 p-8"></div>
+            <FileViewer files={files} />
             <div className="max-w-xl w-full bg-zinc-800 rounded-2xl border border-zinc-700 p-8 flex flex-col gap-4">
                 <MessageList messages={history} />
                 <form onSubmit={handleMessage} className="flex flex-col">

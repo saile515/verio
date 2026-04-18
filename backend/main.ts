@@ -3,13 +3,13 @@ import { MessageParam } from "@anthropic-ai/sdk/resources";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
-import { json } from "body-parser";
 
 dotenv.config();
 
 const app = express();
 app.use(cookieParser());
-app.use(json());
+app.use(express.json());
+app.use(express.static("static"));
 const port = 3000;
 
 interface Session {

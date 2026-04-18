@@ -1,8 +1,8 @@
 import type { Message } from "./types";
 
-export async function serverFetch(path: string, method: string, body?: any) {
+export async function serverFetch(path: string, body?: any, method?: string) {
     return fetch(`/server${path}`, {
-        method,
+        method: (method ?? body) ? "POST" : "GET",
         body: body ? JSON.stringify(body) : undefined,
         headers: body
             ? {
@@ -13,16 +13,16 @@ export async function serverFetch(path: string, method: string, body?: any) {
 }
 
 export async function sendMessage(message: string) {
-    const response = await serverFetch("/message", "POST", { message });
+    const response = await serverFetch("/message", { message });
 
     return (await response.json()).response as Message;
 }
 
 export async function createSession() {
-    await serverFetch("/create-session", "POST");
+    await serverFetch("/create-session", undefined, "POST");
 }
 
 export async function getHistory() {
-    const response = await serverFetch("/history", "GET");
+    const response = await serverFetch("/history");
     return response.json() as Promise<Message[]>;
 }
