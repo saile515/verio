@@ -1,1 +1,31 @@
 @import "tailwindcss";
+
+@import "@mdxeditor/editor/style.css";
+
+* {
+    --basePageBg: var(--color-zinc-700) !important;
+}
+
+.mdxeditor-root-contenteditable, .mdxeditor-root-contenteditable > div {
+    @apply h-full;
+}
+
+.mdxeditor-toolbar {
+    @apply shrink-0;
+}
+
+.mdxeditor h1 {
+    @apply text-3xl;
+}
+
+.mdxeditor h2 {
+    @apply text-xl;
+}
+
+.mdxeditor h3 {
+    @apply text-lg;
+}
+
+.mdxeditor h4 {
+    @apply font-medium;
+}

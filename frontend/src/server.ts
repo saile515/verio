@@ -18,10 +18,6 @@ export async function sendMessage(message: string) {
     return (await response.json()).response as Message;
 }
 
-export async function createSession() {
-    await serverFetch("/create-session", undefined, "POST");
-}
-
 export async function getHistory() {
     const response = await serverFetch("/history");
     return response.json() as Promise<Message[]>;

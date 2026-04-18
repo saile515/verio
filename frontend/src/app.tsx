@@ -2,37 +2,42 @@ import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { useState, type SubmitEvent } from "react";
 import type { Message } from "./types";
 import { MessageList } from "./message-list";
-import { createSession, getHistory, sendMessage, serverFetch } from "./server";
-import { FileViewer, type File } from "./file-viewer";
+import { getHistory, sendMessage, serverFetch } from "./server";
+import { TabViewer, type Tab } from "./tab-viewer";
+import { Markdown } from "./markdown";
+import { ReportEditor } from "./report-editor";
 
 async function getFile(name: string) {
     return await serverFetch(`/files/${name}`).then((res) => res.text());
 }
 
-const files: File[] = [
+const tabs: Tab[] = [
     {
-        filename: "Intro",
-        content: await getFile("intro.md"),
+        tabName: "Intro",
+        content: <Markdown>{await getFile("intro.md")}</Markdown>,
     },
     {
-        filename: "Exhibit A",
-        content: await getFile("exhibit-a.md"),
+        tabName: "Exhibit A",
+        content: <Markdown>{await getFile("exhibit-a.md")}</Markdown>,
     },
     {
-        filename: "Exhibit B",
-        content: await getFile("exhibit-b.md"),
+        tabName: "Exhibit B",
+        content: <Markdown>{await getFile("exhibit-b.md")}</Markdown>,
     },
     {
-        filename: "Exhibit C",
-        content: await getFile("exhibit-c.md"),
+        tabName: "Exhibit C",
+        content: <Markdown>{await getFile("exhibit-c.md")}</Markdown>,
     },
     {
-        filename: "Exhibit D",
-        content: await getFile("exhibit-d.md"),
+        tabName: "Exhibit D",
+        content: <Markdown>{await getFile("exhibit-d.md")}</Markdown>,
+    },
+    {
+        tabName: "Report",
+        content: <ReportEditor />,
     },
 ];
 
-await createSession();
 const initialHistory = await getHistory();
 
 export function App() {
@@ -56,7 +61,7 @@ export function App() {
 
     return (
         <div className="flex w-full h-screen bg-zinc-900 text-zinc-50 p-8 gap-8">
-            <FileViewer files={files} />
+            <TabViewer tabs={tabs} />
             <div className="max-w-xl w-full bg-zinc-800 rounded-2xl border border-zinc-700 p-8 flex flex-col gap-4">
                 <MessageList messages={history} />
                 <form onSubmit={handleMessage} className="flex flex-col">
