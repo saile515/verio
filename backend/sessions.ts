@@ -9,7 +9,8 @@ export type UserEventType =
     | "session-end"
     | "tab-switch"
     | "user-message"
-    | "assistant-message";
+    | "assistant-message"
+    | "paste";
 
 export interface BaseUserEvent {
     type: UserEventType;
@@ -39,12 +40,18 @@ export interface AssistantMessageEvent extends BaseUserEvent {
     message: ContentBlockParam[];
 }
 
+export interface PasteEvent extends BaseUserEvent {
+    type: "paste";
+    wordCount: number;
+}
+
 export type UserEvent =
     | SessionStartEvent
     | SessionEndEvent
     | TabSwitchEvent
     | UserMessageEvent
-    | AssistantMessageEvent;
+    | AssistantMessageEvent
+    | PasteEvent;
 
 export interface Session {
     client: Anthropic;

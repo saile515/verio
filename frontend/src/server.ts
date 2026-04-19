@@ -26,3 +26,7 @@ export async function getHistory() {
 export async function setActiveTab(tab: number) {
     await serverFetch("/set-active-tab", { tab });
 }
+
+export async function pasteEvent(wordCount: number) {
+    await serverFetch("/paste-event", { wordCount }, "POST");
+}

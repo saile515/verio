@@ -2,11 +2,13 @@ import { Session } from "./sessions";
 
 export interface Report {
     tabTime: number[];
+    pastedWords: number;
 }
 
 export function generateReport(session: Session) {
     const result: Report = {
         tabTime: new Array(5).fill(0),
+        pastedWords: 0,
     };
 
     let activeTab: number | null = null;
@@ -21,6 +23,9 @@ export function generateReport(session: Session) {
 
                 activeTab = event.tab;
                 lastTabSwitch = event.time;
+                break;
+            case "paste":
+                result.pastedWords += event.wordCount;
                 break;
             case "session-end":
                 if (activeTab != null && lastTabSwitch != null) {

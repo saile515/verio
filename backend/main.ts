@@ -68,6 +68,14 @@ app.post("/set-active-tab", (request, response) => {
     response.sendStatus(200);
 });
 
+app.post("/paste-event", (request, response) => {
+    createEvent(request.session, {
+        type: "paste",
+        wordCount: request.body.wordCount,
+    });
+    response.sendStatus(200);
+});
+
 app.post("/finish", (request, response) => {
     createEvent(request.session, { type: "session-end" });
     response.sendStatus(200);

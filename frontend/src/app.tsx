@@ -5,7 +5,7 @@ import { MessageList } from "./message-list";
 import { getHistory, sendMessage, serverFetch } from "./server";
 import { TabViewer, type Tab } from "./tab-viewer";
 import { Markdown } from "./markdown";
-import { ReportEditor } from "./report-editor";
+import { MemoEditor } from "./memo-editor";
 
 async function getFile(name: string) {
     return await serverFetch(`/files/${name}`).then((res) => res.text());
@@ -33,8 +33,8 @@ const tabs: Tab[] = [
         content: <Markdown>{await getFile("exhibit-d.md")}</Markdown>,
     },
     {
-        tabName: "Report",
-        content: <ReportEditor />,
+        tabName: "Memo",
+        content: <MemoEditor />,
     },
 ];
 
