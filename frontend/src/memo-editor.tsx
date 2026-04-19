@@ -42,7 +42,7 @@ export function MemoEditor() {
     }, []);
 
     return (
-        <div className="contents" ref={ref}>
+        <div className="h-full flex flex-col" ref={ref}>
             <MDXEditor
                 className="dark grow overflow-hidden flex flex-col"
                 markdown=""
@@ -70,8 +70,11 @@ export function MemoEditor() {
                     listsPlugin(),
                 ]}
             />
-            <button type="button" onClick={() => finish(value)}>
-                Finish
+            <button
+                type="button"
+                onClick={() => finish(value)}
+                className="bg-zinc-50 text-gray-900 rounded-lg mt-1 ml-auto font-medium pl-4 pr-3 py-2 flex items-center gap-1">
+                Submit assignment
             </button>
         </div>
     );
