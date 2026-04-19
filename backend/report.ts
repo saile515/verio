@@ -1,14 +1,18 @@
+import { MemoQuality, gradeMemo } from "./grading";
+
 import { Session } from "./sessions";
 
 export interface Report {
     tabTime: number[];
     pastedWords: number;
+    memoQuality?: MemoQuality;
 }
 
-export function generateReport(session: Session) {
+export async function generateReport(session: Session) {
     const result: Report = {
         tabTime: new Array(5).fill(0),
         pastedWords: 0,
+        memoQuality: await gradeMemo(session),
     };
 
     let activeTab: number | null = null;
