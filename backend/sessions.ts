@@ -1,6 +1,7 @@
 import { ContentBlockParam, MessageParam } from "@anthropic-ai/sdk/resources";
 
 import Anthropic from "@anthropic-ai/sdk";
+import { Report } from "./report";
 import { RequestHandler } from "express";
 import { claudeKey } from "./main";
 
@@ -59,6 +60,7 @@ export interface Session {
     events: UserEvent[];
     locked: boolean;
     memo?: string;
+    report?: Report;
 }
 
 const sessions: Record<string, Session> = {};

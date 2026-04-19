@@ -50,8 +50,8 @@ app.post("/finish", (request, response) => {
     response.sendStatus(200);
 });
 
-app.get("/report", (request, response) => {
-    response.send(generateReport(request.session));
+app.get("/report", async (request, response) => {
+    response.send(await generateReport(request.session));
 });
 
 app.listen(port, () => {

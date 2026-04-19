@@ -6,6 +6,8 @@ import { getHistory, sendMessage, serverFetch } from "./server";
 import { TabViewer, type Tab } from "./tab-viewer";
 import { Markdown } from "./markdown";
 import { MemoEditor } from "./memo-editor";
+import { Report } from "./report";
+import { Card } from "./card";
 
 async function getFile(name: string) {
     return await serverFetch(`/files/${name}`).then((res) => res.text());
@@ -44,6 +46,10 @@ export function App() {
     const [history, setHistory] = useState<Message[]>(initialHistory);
     const [message, setMessage] = useState("");
 
+    if (location.pathname == "/report") {
+        return <Report />;
+    }
+
     async function handleMessage(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
 
@@ -62,7 +68,7 @@ export function App() {
     return (
         <div className="flex w-full h-screen bg-zinc-900 text-zinc-50 p-8 gap-8">
             <TabViewer tabs={tabs} />
-            <div className="max-w-xl w-full bg-zinc-800 rounded-2xl border border-zinc-700 p-8 flex flex-col gap-4">
+            <Card className="max-w-xl w-full gap-4">
                 <MessageList messages={history} />
                 <form onSubmit={handleMessage} className="flex flex-col">
                     <textarea
@@ -85,7 +91,7 @@ export function App() {
                         <PaperAirplaneIcon className="size-5" />
                     </button>
                 </form>
-            </div>
+            </Card>
         </div>
     );
 }

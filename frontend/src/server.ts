@@ -34,3 +34,7 @@ export async function pasteEvent(wordCount: number) {
 export async function finish(memo: string) {
     await serverFetch("/finish", { memo });
 }
+
+export async function getReport() {
+    return (await serverFetch("/report")).json();
+}

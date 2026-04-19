@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 
-import { Markdown } from "./markdown";
 import { setActiveTab } from "./server";
+import { Card } from "./card";
 
 export interface Tab {
     tabName: string;
@@ -28,9 +28,9 @@ export function TabViewer({ tabs }: { tabs: Tab[] }) {
                     </li>
                 ))}
             </ul>
-            <div className="bg-zinc-800 border border-zinc-700 rounded-2xl p-8 grow overflow-auto flex flex-col">
+            <Card className="grow overflow-auto">
                 {tabs[activeTab]?.content}
-            </div>
+            </Card>
         </div>
     );
 }
