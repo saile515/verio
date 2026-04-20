@@ -1,7 +1,7 @@
-import { ContentBlockParam, MessageParam } from "@anthropic-ai/sdk/resources";
 import { InjectionState, injections } from "./chat-agent/injection";
 
 import Anthropic from "@anthropic-ai/sdk";
+import { ContentBlockParam } from "@anthropic-ai/sdk/resources";
 import { Report } from "./report";
 import { RequestHandler } from "express";
 import { claudeKey } from "./main";
@@ -48,6 +48,7 @@ export interface InjectionMessageEvent extends BaseUserEvent {
     message: ContentBlockParam[];
     index: number;
     isConcession: boolean;
+    isWeak: boolean;
 }
 
 export interface PasteEvent extends BaseUserEvent {
@@ -90,7 +91,10 @@ function getSession(sessionId: string) {
             locked: false,
             injectionState: injections.map(() => ({
                 fired: false,
-                challenged: false,
+                resolved: false,
+                concessionIssued: false,
+                weakConcessionCount: 0,
+                fireCount: 0,
             })),
         };
         session.client.apiKey = claudeKey;

@@ -1,8 +1,10 @@
 import { ContentBlockParam, MessageParam } from "@anthropic-ai/sdk/resources";
 import { Session, createEvent } from "../sessions";
 
-import { contextFiles } from "../context-files";
 import { inject } from "./injection";
+import { readFileSync } from "node:fs";
+
+const agentPrompt = readFileSync("../system-prompts/assistant.md", "utf-8");
 
 export async function userMessage(session: Session, prompt: string) {
     const userMessage: ContentBlockParam[] = [
@@ -30,6 +32,7 @@ export async function userMessage(session: Session, prompt: string) {
             message: injection.message.content,
             index: injection.index,
             isConcession: injection.isConcession,
+            isWeak: injection.isWeak,
         });
 
         session.messages.push(injection.message);
@@ -40,7 +43,7 @@ export async function userMessage(session: Session, prompt: string) {
         model: "claude-sonnet-4-6",
         max_tokens: 1024,
         cache_control: { type: "ephemeral" },
-        system: contextFiles,
+        system: agentPrompt,
         messages: session.messages.map((message) =>
             message.role == "injection"
                 ? { ...message, role: "assistant" }

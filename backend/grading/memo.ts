@@ -4,7 +4,7 @@ import { Session } from "../sessions";
 import { contextFiles } from "../context-files";
 import { readFileSync } from "node:fs";
 
-const agentPrompt = readFileSync("./system-prompts/grading-memo.md", "utf-8");
+const agentPrompt = readFileSync("../system-prompts/grading-memo.md", "utf-8");
 
 export type RecommendationFound =
     | "pass"
