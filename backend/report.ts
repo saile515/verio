@@ -1,4 +1,4 @@
-import { MemoQuality, gradeMemo } from "./grading";
+import { MemoQuality, gradeMemo } from "./grading/memo";
 
 import { Session } from "./sessions";
 
