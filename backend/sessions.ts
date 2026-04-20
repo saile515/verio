@@ -1,4 +1,5 @@
 import { ContentBlockParam, MessageParam } from "@anthropic-ai/sdk/resources";
+import { InjectionState, injections } from "./chat-agent/injection";
 
 import Anthropic from "@anthropic-ai/sdk";
 import { Report } from "./report";
@@ -11,6 +12,7 @@ export type UserEventType =
     | "tab-switch"
     | "user-message"
     | "assistant-message"
+    | "injection-message"
     | "paste";
 
 export interface BaseUserEvent {
@@ -41,9 +43,21 @@ export interface AssistantMessageEvent extends BaseUserEvent {
     message: ContentBlockParam[];
 }
 
+export interface InjectionMessageEvent extends BaseUserEvent {
+    type: "injection-message";
+    message: ContentBlockParam[];
+    index: number;
+    isConcession: boolean;
+}
+
 export interface PasteEvent extends BaseUserEvent {
     type: "paste";
     wordCount: number;
+}
+
+export interface Message {
+    role: "user" | "assistant" | "injection";
+    content: ContentBlockParam[];
 }
 
 export type UserEvent =
@@ -52,13 +66,15 @@ export type UserEvent =
     | TabSwitchEvent
     | UserMessageEvent
     | AssistantMessageEvent
+    | InjectionMessageEvent
     | PasteEvent;
 
 export interface Session {
     client: Anthropic;
-    messages: MessageParam[];
+    messages: Message[];
     events: UserEvent[];
     locked: boolean;
+    injectionState: InjectionState[];
     memo?: string;
     report?: Report;
 }
@@ -72,6 +88,10 @@ function getSession(sessionId: string) {
             messages: [],
             events: [],
             locked: false,
+            injectionState: injections.map(() => ({
+                fired: false,
+                challenged: false,
+            })),
         };
         session.client.apiKey = claudeKey;
         sessions[sessionId] = session;

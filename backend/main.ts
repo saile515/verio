@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express from "express";
 import { generateReport } from "./report";
-import { userMessage } from "./user-messaging";
+import { userMessage } from "./chat-agent/user-messaging";
 
 dotenv.config();
 

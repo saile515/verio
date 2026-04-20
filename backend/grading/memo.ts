@@ -1,7 +1,7 @@
 import { Criteria, criteriaResultSchema, criteriaSchema, grade } from "./util";
 
 import { Session } from "../sessions";
-import { contextFiles } from "../user-messaging";
+import { contextFiles } from "../context-files";
 import { readFileSync } from "node:fs";
 
 const agentPrompt = readFileSync("./system-prompts/grading-memo.md", "utf-8");
