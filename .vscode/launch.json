@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Backend",
+            "request": "launch",
+            "type": "node-terminal",
+            "command": "tsx main.ts",
+            "cwd": "${workspaceFolder}/backend"
+        },
+        {
+            "name": "Frontend",
+            "request": "launch",
+            "type": "node-terminal",
+            "command": "npm run dev",
+            "cwd": "${workspaceFolder}/frontend"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Frontend/Backend",
+            "configurations": ["Frontend", "Backend"],
+            "stopAll": true
+        }
+    ]
+}
