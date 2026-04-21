@@ -45,6 +45,7 @@ const initialHistory = await getHistory();
 export function App() {
     const [history, setHistory] = useState<Message[]>(initialHistory);
     const [message, setMessage] = useState("");
+    const [messagePending, setMessagePending] = useState(false);
 
     if (location.pathname == "/report") {
         return <Report />;
@@ -59,17 +60,25 @@ export function App() {
         ]);
 
         setMessage("");
+        setMessagePending(true);
 
-        const response = await sendMessage(message);
+        const response = await sendMessage(message).catch(() => undefined);
 
-        setHistory((previous) => [...previous, response]);
+        if (response) {
+            setHistory((previous) => [...previous, response]);
+        }
+
+        setMessagePending(false);
     }
 
     return (
         <div className="flex w-full h-screen bg-zinc-900 text-zinc-50 p-8 gap-8">
             <TabViewer tabs={tabs} />
             <Card className="max-w-xl w-full gap-4">
-                <MessageList messages={history} />
+                <MessageList
+                    messages={history}
+                    messagePending={messagePending}
+                />
                 <form onSubmit={handleMessage} className="flex flex-col">
                     <textarea
                         className="border border-zinc-600 rounded-lg focus:outline-none focus:border-zinc-200 p-4"

@@ -4,7 +4,7 @@
             "name": "Backend",
             "request": "launch",
             "type": "node-terminal",
-            "command": "tsx main.ts",
+            "command": "npm run build && npm start",
             "cwd": "${workspaceFolder}/backend"
         },
         {

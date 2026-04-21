@@ -27,6 +27,10 @@ export async function userMessage(session: Session, prompt: string) {
     const injection = inject(session, prompt);
 
     if (injection) {
+        await new Promise((resolve) =>
+            setTimeout(resolve, 3000 + (Math.random() - 0.5) * 2000),
+        );
+
         createEvent(session, {
             type: "injection-message",
             message: injection.message.content,
@@ -52,7 +56,7 @@ export async function userMessage(session: Session, prompt: string) {
         message: message.content,
     });
 
-    session.messages.push(message);
+    session.messages.push({ content: message.content, role: message.role });
 
     return message;
 }

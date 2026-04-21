@@ -101,12 +101,8 @@ export function inject(
 ): InjectionResult | null {
     const normalizedPrompt = prompt.toLowerCase().trim();
 
-    if (!match(normalizedPrompt, injectionTriggers)) {
-        return null;
-    }
-
-    const unresolved = session.injectionState.map((state) =>
-        state.fired && !state.resolved ? true : false,
+    const unresolved = session.injectionState.map(
+        (state) => state.fired && !state.resolved,
     );
     const unresolvedCount = unresolved.filter((state) => state).length;
 
@@ -168,6 +164,10 @@ export function inject(
                 isWeak: true,
             };
         }
+    }
+
+    if (!match(normalizedPrompt, injectionTriggers)) {
+        return null;
     }
 
     for (let i = 0; i < injections.length; i++) {

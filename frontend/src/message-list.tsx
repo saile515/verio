@@ -18,7 +18,13 @@ function Message({ message }: { message: Message }) {
     );
 }
 
-export function MessageList({ messages }: { messages: Message[] }) {
+export function MessageList({
+    messages,
+    messagePending,
+}: {
+    messages: Message[];
+    messagePending: boolean;
+}) {
     const messageContainerRef = useRef<HTMLOListElement>(null);
 
     function scrollToBottom() {
@@ -37,6 +43,16 @@ export function MessageList({ messages }: { messages: Message[] }) {
             {messages.map((message, index) => (
                 <Message message={message} key={index} />
             ))}
+            {messagePending && (
+                <li>
+                    <div>Verio</div>
+                    <div className="bg-zinc-700 rounded-tl-none px-4 py-2 rounded-lg w-fit flex gap-1 h-8 items-center">
+                        <div className="size-2 rounded-full animate-bounce bg-zinc-50 [animation-delay:-0.3s]" />
+                        <div className="size-2 rounded-full animate-bounce bg-zinc-50 [animation-delay:-0.15s]" />
+                        <div className="size-2 rounded-full animate-bounce bg-zinc-50" />
+                    </div>
+                </li>
+            )}
         </ol>
     );
 }
