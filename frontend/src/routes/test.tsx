@@ -1,14 +1,19 @@
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState, type SubmitEvent } from "react";
-import type { Message } from "../lib/types";
 import { MessageList } from "../components/message-list";
-import { getHistory, sendMessage, serverFetch } from "../lib/server";
+import {
+    getSession,
+    sendMessage,
+    serverFetch,
+    type Session,
+} from "../lib/server";
 import { TabViewer, type Tab } from "../components/tab-viewer";
 import { Markdown } from "../components/markdown";
 import { MemoEditor } from "../components/memo-editor";
 import { Card } from "../components/card";
 import { Button } from "../components/button";
 import { TextAreaInput } from "../components/input";
+import type { Message } from "@backend/sessions";
 
 async function getFile(name: string) {
     return await serverFetch(`/files/${name}`).then((res) => res.text());
@@ -23,12 +28,16 @@ const files = [
 ];
 
 export function Test() {
+    const [session, setSession] = useState<Session | null>(null);
     const [history, setHistory] = useState<Message[]>([]);
     const [message, setMessage] = useState("");
     const [messagePending, setMessagePending] = useState(false);
 
     useEffect(() => {
-        getHistory().then(setHistory);
+        getSession().then((session) => {
+            setSession(session);
+            setHistory(session.messages);
+        });
     }, []);
 
     const tabs: Tab[] = [
@@ -63,7 +72,7 @@ export function Test() {
 
         setHistory((previous) => [
             ...previous,
-            { role: "user", content: [{ text: message }] },
+            { role: "user", content: [{ type: "text", text: message }] },
         ]);
 
         setMessage("");
@@ -78,9 +87,13 @@ export function Test() {
         setMessagePending(false);
     }
 
+    if (!session) {
+        return;
+    }
+
     return (
-        <div className="flex w-full h-screen gap-8">
-            <TabViewer tabs={tabs} />
+        <div className="flex w-full grow gap-8">
+            <TabViewer tabs={tabs} expires={session.expires} />
             <Card className="max-w-xl w-full gap-4">
                 <MessageList
                     messages={history}

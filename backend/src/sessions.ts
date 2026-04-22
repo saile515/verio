@@ -71,6 +71,8 @@ export type UserEvent =
     | PasteEvent;
 
 export interface Session {
+    created: Date;
+    expires: Date;
     code: string;
     client: Anthropic;
     messages: Message[];
@@ -86,7 +88,13 @@ const sessions: Record<string, Session> = {};
 export function createSession(code: string) {
     const sessionId = crypto.randomUUID();
 
+    const created = new Date();
+    const expires = new Date(created);
+    expires.setMinutes(expires.getMinutes() + 15);
+
     const session: Session = {
+        created,
+        expires,
         code,
         client: new Anthropic(),
         messages: [],

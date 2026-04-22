@@ -1,4 +1,4 @@
-import type { Message } from "./types";
+import type { Message } from "@backend/sessions";
 
 export async function serverFetch(path: string, body?: any, method?: string) {
     return fetch(`/server${path}`, {
@@ -22,9 +22,18 @@ export async function sendMessage(message: string) {
     return (await response.json()).response as Message;
 }
 
-export async function getHistory() {
-    const response = await serverFetch("/history");
-    return response.json() as Promise<Message[]>;
+export interface Session {
+    created: Date;
+    expires: Date;
+    messages: Message[];
+}
+
+export async function getSession() {
+    const response = await serverFetch("/get-session");
+    const result = await response.json();
+    result.created = new Date(result.created);
+    result.expires = new Date(result.expires);
+    return result as Session;
 }
 
 export async function setActiveTab(tab: number) {

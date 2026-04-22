@@ -46,8 +46,9 @@ app.post("/create-session", async (request, response) => {
     response.sendStatus(201);
 });
 
-app.get("/history", sessionMiddleware, async (request, response) => {
-    response.send(request.session.messages);
+app.get("/get-session", sessionMiddleware, async (request, response) => {
+    const { messages, created, expires } = request.session;
+    response.send({ messages, created, expires });
 });
 
 app.post("/message", sessionMiddleware, async (request, response) => {
