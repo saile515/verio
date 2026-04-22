@@ -1,13 +1,12 @@
 import { PaperAirplaneIcon } from "@heroicons/react/20/solid";
 import { useState, type SubmitEvent } from "react";
-import type { Message } from "./types";
-import { MessageList } from "./message-list";
-import { getHistory, sendMessage, serverFetch } from "./server";
-import { TabViewer, type Tab } from "./tab-viewer";
-import { Markdown } from "./markdown";
-import { MemoEditor } from "./memo-editor";
-import { Report } from "./report";
-import { Card } from "./card";
+import type { Message } from "../lib/types";
+import { MessageList } from "../components/message-list";
+import { getHistory, sendMessage, serverFetch } from "../lib/server";
+import { TabViewer, type Tab } from "../components/tab-viewer";
+import { Markdown } from "../components/markdown";
+import { MemoEditor } from "../components/memo-editor";
+import { Card } from "../components/card";
 
 async function getFile(name: string) {
     return await serverFetch(`/files/${name}`).then((res) => res.text());
@@ -42,14 +41,10 @@ const tabs: Tab[] = [
 
 const initialHistory = await getHistory();
 
-export function App() {
+export function Test() {
     const [history, setHistory] = useState<Message[]>(initialHistory);
     const [message, setMessage] = useState("");
     const [messagePending, setMessagePending] = useState(false);
-
-    if (location.pathname == "/report") {
-        return <Report />;
-    }
 
     async function handleMessage(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();

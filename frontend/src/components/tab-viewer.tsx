@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from "react";
 
-import { setActiveTab } from "./server";
+import { setActiveTab } from "../lib/server";
 import { Card } from "./card";
 
 export interface Tab {

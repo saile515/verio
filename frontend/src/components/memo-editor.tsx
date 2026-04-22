@@ -12,7 +12,7 @@ import {
     tablePlugin,
     toolbarPlugin,
 } from "@mdxeditor/editor";
-import { finish, pasteEvent } from "./server";
+import { finish, pasteEvent } from "../lib/server";
 import { useEffect, useRef, useState } from "react";
 
 export function MemoEditor() {

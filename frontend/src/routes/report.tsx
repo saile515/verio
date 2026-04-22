@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
-import { Card } from "./card";
-import { RadarChart } from "./radar-chart";
-import { getReport } from "./server";
+import { Card } from "../components/card";
+import { RadarChart } from "../components/radar-chart";
+import { getReport } from "../lib/server";
 
 export type RecommendationFound =
     | "pass"

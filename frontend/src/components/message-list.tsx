@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Markdown } from "./markdown";
-import type { Message } from "./types";
+import type { Message } from "../lib/types";
 
 function Message({ message }: { message: Message }) {
     const isUser = message.role == "user";
