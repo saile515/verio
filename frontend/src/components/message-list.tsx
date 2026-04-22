@@ -1,13 +1,11 @@
 import { useEffect, useRef } from "react";
 import { Markdown } from "./markdown";
-import type { Message } from "@backend/sessions";
+import type { Message } from "../types/session";
 
 function Message({ message }: { message: Message }) {
     const isUser = message.role == "user";
 
-    const content = message.content
-        .map((content) => (content.type == "text" ? content.text : ""))
-        .join("");
+    const content = message.content.map(({ text }) => text).join("");
 
     return (
         <li className={isUser ? "ml-auto text-right" : ""}>

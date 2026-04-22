@@ -19,10 +19,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "erasableSyntaxOnly": true,
-        "noFallthroughCasesInSwitch": true,
-        "paths": {
-            "@backend/*": ["../backend/src/*"]
-        }
+        "noFallthroughCasesInSwitch": true
     },
     "include": ["src"]
 }

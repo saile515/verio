@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 
 import { Card } from "../components/card";
-import type { Criteria } from "@backend/grading/util";
 import { RadarChart } from "../components/radar-chart";
 import { getReport } from "../lib/server";
-import type { Report } from "@backend/report";
+import type { Criteria, Report } from "../types/report";
 
 function Criteria({ metric, label }: { metric: Criteria; label: string }) {
     return (

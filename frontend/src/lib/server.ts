@@ -1,4 +1,4 @@
-import type { Message } from "@backend/sessions";
+import type { Message } from "../types/session";
 
 export async function serverFetch(path: string, body?: any, method?: string) {
     return fetch(`/server${path}`, {

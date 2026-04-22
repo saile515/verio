@@ -13,7 +13,7 @@ import { MemoEditor } from "../components/memo-editor";
 import { Card } from "../components/card";
 import { Button } from "../components/button";
 import { TextAreaInput } from "../components/input";
-import type { Message } from "@backend/sessions";
+import type { Message } from "../types/session";
 
 async function getFile(name: string) {
     return await serverFetch(`/files/${name}`).then((res) => res.text());
