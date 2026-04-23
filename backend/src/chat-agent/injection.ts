@@ -1,6 +1,6 @@
 import { Message, Session } from "../sessions.js";
 
-const injectionTriggers = [
+const injectionTriggers = or(
     "walk me through",
     "overview",
     "summarize",
@@ -15,16 +15,29 @@ const injectionTriggers = [
     "key takeaways",
     "high level",
     "headline view",
-];
+);
 
-export type InjectionMatchList = (string | string[])[];
+export interface MatchExpression {
+    type: "and" | "or";
+    values: Match[];
+}
+
+export type Match = MatchExpression | string;
+
+function and(...values: Match[]): MatchExpression {
+    return { type: "and", values };
+}
+
+function or(...values: Match[]): MatchExpression {
+    return { type: "or", values };
+}
 
 export interface Injection {
-    matches: InjectionMatchList;
-    antiMatches: InjectionMatchList;
-    challengeMatches: InjectionMatchList;
-    exhibitChallengeMatches: InjectionMatchList;
-    weakChallengeMatches: InjectionMatchList;
+    matches: Match;
+    antiMatches: Match;
+    challengeMatches: Match;
+    exhibitChallengeMatches: Match;
+    weakChallengeMatches: Match;
     response: string;
     concessionResponse: string;
     weakConcessionResponse: string;
@@ -33,7 +46,7 @@ export interface Injection {
 // Removed matches which are super-sets of other triggers since those will be matched anyway.
 export const injections: Injection[] = [
     {
-        matches: [
+        matches: or(
             "growth",
             "growing",
             "trajectory",
@@ -47,24 +60,69 @@ export const injections: Injection[] = [
             "momentum",
             "pace",
             "slowdown",
-        ],
-        antiMatches: ["valuation", "multiple", "retention", "churn"],
-        challengeMatches: ["28"],
-        exhibitChallengeMatches: ["exhibit b"],
-        weakChallengeMatches: [
+        ),
+        antiMatches: or("valuation", "multiple", "retention", "churn"),
+        challengeMatches: or("28,twenty eight"),
+        exhibitChallengeMatches: "exhibit b",
+        weakChallengeMatches: or(
             "current growth",
             "you're blending",
             "not 40",
             "decelerat",
             "latest figure",
             "most recent figure",
-        ],
+        ),
         response:
             "Based on the ARR progression and the current 156M run-rate, I'd characterize Lindstrand as still growing around 40%+ annualized. That's a solid growth profile for a Series C SaaS company.",
         concessionResponse:
             "You're right — the explicit current YoY figure is 28%. My earlier wording blended historical growth with the current trajectory. I'd frame the business as decelerating rather than still growing at 40%+.",
         weakConcessionResponse:
             "Fair push. Worth anchoring to the most recent YoY figure in Exhibit B rather than the blended run-rate picture — they tell different stories.",
+    },
+    {
+        matches: or(
+            "churn",
+            "logo loss",
+            "customer loss",
+            "grr",
+            "retention risk",
+            "ltv",
+            "lifetime value",
+            "customer health",
+            "sticky",
+            "stickiness",
+            "how well do they retain",
+            "losing customers",
+            "attrition",
+            "keeping customers",
+            "renewal quality",
+            "customer base quality",
+            "durability",
+            "customer quality",
+            "are they keeping",
+            "retention durability",
+            and(
+                "retention",
+                or("customer", "logo", "gross", "rate", "quality"),
+            ),
+        ),
+        antiMatches: or("nrr", "expansion"),
+        challengeMatches: or("6,six"),
+        exhibitChallengeMatches: "exhibit b",
+        weakChallengeMatches: or(
+            "where are you getting",
+            "doesn't match",
+            "the case says",
+            "12 is wrong",
+            "not 12",
+            "exhibit shows",
+        ),
+        response:
+            "The main yellow flag in the unit economics is gross logo churn at 12% annualized. That's high for this kind of mid-market SaaS business and would be my main diligence concern.",
+        concessionResponse:
+            "Good catch — Exhibit B gives gross logo churn as 6%, not 12%. I overstated the churn risk. That puts churn much closer to a top-quartile range than to a red-flag range.",
+        weakConcessionResponse:
+            "Fair push. Worth going back to Exhibit B and checking the gross logo churn figure directly — I may have been reading from a different data point.",
     },
 ];
 
@@ -76,13 +134,17 @@ export interface InjectionState {
     fireCount: number;
 }
 
-function match(prompt: string, list: InjectionMatchList) {
-    for (const match of list) {
-        const matchList = Array.isArray(match) ? match : [match];
+function match(prompt: string, expression: Match): boolean {
+    if (typeof expression == "string") {
+        return prompt.includes(expression);
+    }
 
-        if (matchList.every((match) => prompt.includes(match))) {
-            return true;
-        }
+    if (expression.type == "and") {
+        return expression.values.every((value) => match(prompt, value));
+    }
+
+    if (expression.type == "or") {
+        return expression.values.some((value) => match(prompt, value));
     }
 
     return false;
