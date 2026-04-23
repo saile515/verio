@@ -33,11 +33,11 @@ export function Report() {
     }, []);
 
     if (!report?.memoQuality) {
-        return <div>Loading report</div>;
+        return <div className="p-8">Loading report</div>;
     }
 
     return (
-        <div className="flex flex-col mx-auto">
+        <div className="flex flex-col mx-auto p-8">
             <div className="mx-auto w-fit">
                 <RadarChart
                     metrics={[

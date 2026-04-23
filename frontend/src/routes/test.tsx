@@ -92,9 +92,9 @@ export function Test() {
     }
 
     return (
-        <div className="flex w-full grow gap-8">
+        <div className="flex w-full h-screen grow gap-8 p-8">
             <TabViewer tabs={tabs} expires={session.expires} />
-            <Card className="max-w-xl w-full gap-4">
+            <Card className="max-w-xl size-full gap-4">
                 <MessageList
                     messages={history}
                     messagePending={messagePending}
@@ -112,7 +112,7 @@ export function Test() {
                             }
                         }}
                     />
-                    <Button type="submit">
+                    <Button type="submit" className="mt-1 ml-auto">
                         Send
                         <PaperAirplaneIcon className="size-5" />
                     </Button>

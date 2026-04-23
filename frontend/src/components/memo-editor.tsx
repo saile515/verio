@@ -79,7 +79,9 @@ export function MemoEditor() {
                     listsPlugin(),
                 ]}
             />
-            <Button onClick={handleSubmit}>Submit assignment</Button>
+            <Button className="ml-auto mt-1" onClick={handleSubmit}>
+                Submit assignment
+            </Button>
         </div>
     );
 }

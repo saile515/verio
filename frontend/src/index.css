@@ -2,6 +2,15 @@
 
 @import "@mdxeditor/editor/style.css";
 
+@font-face {
+    font-family: 'Roboto Slab';
+    src: url(/roboto-slab.ttf)
+}
+
+@theme {
+    --font-display: 'Roboto Slab', system-ui, sans-serif;
+}
+
 * {
     --basePageBg: var(--color-zinc-700) !important;
 }

@@ -8,7 +8,7 @@ export function Button({
     return (
         <button
             type={type}
-            className={`${className} bg-zinc-50 hover:scale-102 transition-transform text-gray-900 rounded-lg mt-1 ml-auto font-medium px-4 py-2 flex items-center gap-1 cursor-pointer`}
+            className={`${className} bg-zinc-50 hover:scale-102 transition-transform text-gray-900 rounded-lg font-medium px-4 py-2 flex items-center gap-1 cursor-pointer`}
             {...props}
         />
     );

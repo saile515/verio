@@ -10,7 +10,7 @@ import { createRoot } from "react-dom/client";
 
 function Layout() {
     return (
-        <div className="flex flex-col min-h-screen bg-zinc-900 text-zinc-50 p-8">
+        <div className="min-h-screen bg-zinc-900 text-zinc-50 font-display">
             <Outlet />
         </div>
     );

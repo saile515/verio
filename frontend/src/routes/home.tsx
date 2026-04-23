@@ -19,20 +19,28 @@ export function Home() {
     }
 
     return (
-        <div className="flex h-screen w-full items-center justify-center">
-            <Card>
-                <h1 className="text-5xl font-medium">Verio</h1>
-                <div className="text-xl">Candidate testing for the AI age</div>
-                <form className="flex gap-2 mt-4" onSubmit={handleSubmit}>
-                    <div>
-                        <h2>Enter code</h2>
-                        <TextInput value={code} onChange={setCode} />
+        <div className="flex h-screen w-full items-center justify-center p-8">
+            <div className="flex flex-col gap-8">
+                <div className="text-center">
+                    <h1 className="text-5xl font-medium">Verio</h1>
+                    <div className="text-xl">
+                        Candidate testing for the AI age
                     </div>
-                    <Button type="submit" className="self-end">
-                        Start test
-                    </Button>
-                </form>
-            </Card>
+                </div>
+                <Card>
+                    <form
+                        className="flex flex-col gap-2"
+                        onSubmit={handleSubmit}>
+                        <div>
+                            <h2>Enter code</h2>
+                            <TextInput value={code} onChange={setCode} />
+                        </div>
+                        <Button type="submit" className="justify-center">
+                            Start test
+                        </Button>
+                    </form>
+                </Card>
+            </div>
         </div>
     );
 }
