@@ -114,6 +114,10 @@ export function inject(
         const injection = injections[i];
         const injectionState = session.injectionState[i];
 
+        if (!match(normalizedPrompt, injection.weakChallengeMatches)) {
+            continue;
+        }
+
         if (
             match(normalizedPrompt, injection.challengeMatches) ||
             (unresolvedCount == 1 &&
@@ -142,28 +146,26 @@ export function inject(
             continue;
         }
 
-        if (match(normalizedPrompt, injection.weakChallengeMatches)) {
-            injectionState.concessionIssued = true;
+        injectionState.concessionIssued = true;
 
-            if (++injectionState.weakConcessionCount >= 2) {
-                injectionState.resolved = true;
-            }
-
-            return {
-                message: {
-                    role: "assistant",
-                    content: [
-                        {
-                            type: "text",
-                            text: injection.weakConcessionResponse,
-                        },
-                    ],
-                },
-                index: i,
-                isConcession: true,
-                isWeak: true,
-            };
+        if (++injectionState.weakConcessionCount >= 2) {
+            injectionState.resolved = true;
         }
+
+        return {
+            message: {
+                role: "assistant",
+                content: [
+                    {
+                        type: "text",
+                        text: injection.weakConcessionResponse,
+                    },
+                ],
+            },
+            index: i,
+            isConcession: true,
+            isWeak: true,
+        };
     }
 
     if (!match(normalizedPrompt, injectionTriggers)) {
