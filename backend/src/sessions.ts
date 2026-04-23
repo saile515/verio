@@ -90,7 +90,7 @@ export function createSession(code: string) {
 
     const created = new Date();
     const expires = new Date(created);
-    expires.setMinutes(expires.getMinutes() + 15);
+    expires.setMinutes(expires.getMinutes() + 30);
 
     const session: Session = {
         created,
