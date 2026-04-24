@@ -12,7 +12,8 @@
 }
 
 * {
-    --basePageBg: var(--color-stone-700) !important;
+    --baseBg: var(--color-stone-700) !important;
+    --basePageBg: var(--color-stone-800) !important;
 }
 
 .mdxeditor-root-contenteditable, .mdxeditor-root-contenteditable > div {
