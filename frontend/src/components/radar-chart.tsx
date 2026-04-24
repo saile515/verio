@@ -17,8 +17,8 @@ export function RadarChart({
     levels = 5,
 }: {
     metrics: Metric[];
-    size: number;
-    levels: number;
+    size?: number;
+    levels?: number;
 }) {
     const cx = size / 2;
     const cy = size / 2;
