@@ -12,7 +12,7 @@
 }
 
 * {
-    --basePageBg: var(--color-zinc-700) !important;
+    --basePageBg: var(--color-stone-700) !important;
 }
 
 .mdxeditor-root-contenteditable, .mdxeditor-root-contenteditable > div {

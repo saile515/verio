@@ -49,7 +49,7 @@ export function TabViewer({ tabs, expires }: { tabs: Tab[]; expires: Date }) {
                     <button
                         key={filename}
                         onClick={() => setActiveTabState(index)}
-                        className={`${index == activeTab ? "bg-zinc-600" : "bg-zinc-800"} px-2 py-1 rounded`}>
+                        className={`${index == activeTab ? "bg-stone-600" : "bg-stone-800"} px-2 py-1 rounded`}>
                         {filename}
                     </button>
                 ))}

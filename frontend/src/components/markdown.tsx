@@ -11,13 +11,13 @@ export function Markdown({
             components={{
                 td: (props) => (
                     <td
-                        className="border border-zinc-50 px-2 py-1"
+                        className="border border-stone-50 px-2 py-1"
                         {...props}
                     />
                 ),
                 th: (props) => (
                     <th
-                        className="border border-zinc-50 px-2 py-1"
+                        className="border border-stone-50 px-2 py-1"
                         {...props}
                     />
                 ),

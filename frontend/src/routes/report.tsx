@@ -13,9 +13,9 @@ function Criteria({ metric, label }: { metric: Criteria; label: string }) {
                 <div
                     className="ml-auto size-12 p-1 rounded-full shrink-0 -mt-4"
                     style={{
-                        background: `conic-gradient(var(--color-blue-600) ${metric.result.score * 100}%, var(--color-zinc-900) ${metric.result.score * 100}%)`,
+                        background: `conic-gradient(var(--color-blue-600) ${metric.result.score * 100}%, var(--color-stone-900) ${metric.result.score * 100}%)`,
                     }}>
-                    <div className="size-full bg-zinc-800 rounded-full flex items-center justify-center font-bold text-lg">
+                    <div className="size-full bg-stone-800 rounded-full flex items-center justify-center font-bold text-lg">
                         {Math.round(metric.result.score * 100) / 10}
                     </div>
                 </div>

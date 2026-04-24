@@ -11,7 +11,7 @@ function Message({ message }: { message: Message }) {
         <li className={isUser ? "ml-auto text-right" : ""}>
             <div>{isUser ? "You" : "Verio"}</div>
             <div
-                className={`${isUser ? "bg-zinc-50 text-zinc-900 rounded-tr-none" : "bg-zinc-700 rounded-tl-none"} px-4 py-2 rounded-lg`}>
+                className={`${isUser ? "bg-stone-50 text-stone-900 rounded-tr-none" : "bg-stone-700 rounded-tl-none"} px-4 py-2 rounded-lg`}>
                 <Markdown>{content}</Markdown>
             </div>
         </li>
@@ -46,10 +46,10 @@ export function MessageList({
             {messagePending && (
                 <li>
                     <div>Verio</div>
-                    <div className="bg-zinc-700 rounded-tl-none px-4 py-2 rounded-lg w-fit flex gap-1 h-8 items-center">
-                        <div className="size-2 rounded-full animate-bounce bg-zinc-50 [animation-delay:-0.3s]" />
-                        <div className="size-2 rounded-full animate-bounce bg-zinc-50 [animation-delay:-0.15s]" />
-                        <div className="size-2 rounded-full animate-bounce bg-zinc-50" />
+                    <div className="bg-stone-700 rounded-tl-none px-4 py-2 rounded-lg w-fit flex gap-1 h-8 items-center">
+                        <div className="size-2 rounded-full animate-bounce bg-stone-50 [animation-delay:-0.3s]" />
+                        <div className="size-2 rounded-full animate-bounce bg-stone-50 [animation-delay:-0.15s]" />
+                        <div className="size-2 rounded-full animate-bounce bg-stone-50" />
                     </div>
                 </li>
             )}
