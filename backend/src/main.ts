@@ -77,7 +77,14 @@ app.post("/submit-test", sessionMiddleware, (request, response) => {
 });
 
 app.get("/report", sessionMiddleware, async (request, response) => {
-    response.send(await generateReport(request.session));
+    if (!request.session.locked) {
+        response.sendStatus(403);
+        return;
+    }
+
+    response.send(
+        request.session.report ?? (await generateReport(request.session)),
+    );
 });
 
 app.listen(port, () => {

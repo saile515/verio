@@ -9,10 +9,6 @@ export interface Report {
 }
 
 export async function generateReport(session: Session) {
-    if (session.report) {
-        return session.report;
-    }
-
     const result: Report = {
         tabTime: new Array(5).fill(0),
         pastedWords: 0,
