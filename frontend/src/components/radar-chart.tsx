@@ -1,11 +1,7 @@
-const DEFAULT_METRICS = [
-    { label: "Speed", value: 0.80 },
-    { label: "Power", value: 0.65 },
-    { label: "Accuracy", value: 0.90 },
-    { label: "Stamina", value: 0.55 },
-    { label: "Agility", value: 0.75 },
-    { label: "Defense", value: 0.70 },
-];
+export interface Metric {
+    label: string;
+    value: number;
+}
 
 function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
     const rad = ((angleDeg - 90) * Math.PI) / 180;
@@ -16,9 +12,13 @@ function polarToCartesian(cx: number, cy: number, r: number, angleDeg: number) {
 }
 
 export function RadarChart({
-    metrics = DEFAULT_METRICS,
+    metrics,
     size = 400,
     levels = 5,
+}: {
+    metrics: Metric[];
+    size: number;
+    levels: number;
 }) {
     const cx = size / 2;
     const cy = size / 2;
@@ -69,7 +69,11 @@ export function RadarChart({
                     key={i}
                     points={points}
                     fill="none"
-                    stroke={i === levels - 1 ? "#4a4a6a" : "#2a2a3a"}
+                    stroke={
+                        i === levels - 1
+                            ? "var(--color-stone-600)"
+                            : "var(--color-stone-800)"
+                    }
                     strokeWidth={i === levels - 1 ? 1.5 : 1}
                 />
             ))}
@@ -82,7 +86,7 @@ export function RadarChart({
                     y1={cy}
                     x2={pt.x}
                     y2={pt.y}
-                    stroke="#2a2a3a"
+                    stroke="var(--color-stone-800)"
                     strokeWidth={1}
                 />
             ))}
@@ -90,8 +94,9 @@ export function RadarChart({
             {/* Data area */}
             <polygon
                 points={dataPolygon}
-                fill="rgba(99, 179, 237, 0.15)"
-                stroke="#63b3ed"
+                fill="var(--color-lime-200)"
+                fillOpacity={0.15}
+                stroke="var(--color-lime-200)"
                 strokeWidth={2}
                 strokeLinejoin="round"
             />
@@ -103,8 +108,8 @@ export function RadarChart({
                     cx={x}
                     cy={y}
                     r={4}
-                    fill="#63b3ed"
-                    stroke="#0f0f1a"
+                    fill="var(--color-lime-200)"
+                    stroke="var(--color-lime-800)"
                     strokeWidth={1.5}
                 />
             ))}
@@ -119,7 +124,7 @@ export function RadarChart({
                             x={x}
                             y={y - 4}
                             textAnchor={textAnchor}
-                            fill="#e2e8f0"
+                            fill="var(--color-stone-300)"
                             fontSize={12}
                             fontWeight="600">
                             {label}
@@ -128,7 +133,7 @@ export function RadarChart({
                             x={x}
                             y={y + 10}
                             textAnchor={textAnchor}
-                            fill="#63b3ed"
+                            fill="var(--color-lime-200)"
                             fontSize={11}>
                             {value}
                         </text>
@@ -137,7 +142,7 @@ export function RadarChart({
             })}
 
             {/* Center dot */}
-            <circle cx={cx} cy={cy} r={3} fill="#4a4a6a" />
+            <circle cx={cx} cy={cy} r={3} fill="var(--color-lime-200)" />
         </svg>
     );
 }
