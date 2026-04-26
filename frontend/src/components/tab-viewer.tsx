@@ -46,13 +46,13 @@ export function TabViewer({ tabs, expires }: { tabs: Tab[]; expires: Date }) {
     }, [activeTab]);
 
     return (
-        <div className="grow flex flex-col gap-2">
-            <div className="flex gap-2">
+        <div className="grow flex flex-col gap-2 h-full">
+            <div className="flex gap-2 flex-wrap">
                 {tabs.map(({ tabName: filename }, index) => (
                     <button
                         key={filename}
                         onClick={() => setActiveTabState(index)}
-                        className={`${index == activeTab ? "border-b-2 border-lime-200 rounded-b-none" : "hover:border-b-2 border-lime-100"} transition-[border] duration-100 bg-stone-800 px-2 py-1 rounded`}>
+                        className={`${index == activeTab ? "border-b-2 border-lime-200 rounded-b-none" : "hover:border-b-2 border-lime-100"} transition-[border] duration-100 bg-stone-800 px-2 py-1 rounded whitespace-nowrap`}>
                         {filename}
                     </button>
                 ))}

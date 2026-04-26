@@ -27,18 +27,68 @@ const files = [
     await getFile("exhibit-d.md"),
 ];
 
-export function Test() {
-    const [session, setSession] = useState<Session | null>(null);
-    const [history, setHistory] = useState<Message[]>([]);
+function Chat({ session }: { session: Session }) {
+    const [history, setHistory] = useState<Message[]>(session.messages);
     const [message, setMessage] = useState("");
     const [messagePending, setMessagePending] = useState(false);
+
+    async function handleMessage(event: SubmitEvent<HTMLFormElement>) {
+        event.preventDefault();
+
+        setHistory((previous) => [
+            ...previous,
+            { role: "user", content: [{ type: "text", text: message }] },
+        ]);
+
+        setMessage("");
+        setMessagePending(true);
+
+        const response = await sendMessage(message).catch(() => undefined);
+
+        if (response) {
+            setHistory((previous) => [...previous, response]);
+        }
+
+        setMessagePending(false);
+    }
+
+    return (
+        <>
+            <MessageList messages={history} messagePending={messagePending} />
+            <form onSubmit={handleMessage} className="flex flex-col">
+                <TextAreaInput
+                    value={message}
+                    onChange={setMessage}
+                    onKeyDown={(event) => {
+                        if (event.key == "Enter" && !event.shiftKey) {
+                            event.preventDefault();
+                            (
+                                event.target as HTMLTextAreaElement
+                            ).form?.requestSubmit();
+                        }
+                    }}
+                />
+                <Button type="submit" className="mt-1 ml-auto">
+                    Send
+                    <PaperAirplaneIcon className="size-5" />
+                </Button>
+            </form>
+        </>
+    );
+}
+
+export function Test() {
+    const [session, setSession] = useState<Session | null>(null);
 
     useEffect(() => {
         getSession().then((session) => {
             setSession(session);
-            setHistory(session.messages);
         });
     }, []);
+
+    if (!session) {
+        return;
+    }
 
     const tabs: Tab[] = [
         {
@@ -65,58 +115,16 @@ export function Test() {
             tabName: "Memo",
             content: <MemoEditor />,
         },
+        ...(window.innerWidth < 1024
+            ? [{ tabName: "Chat", content: <Chat session={session} /> }]
+            : []),
     ];
 
-    async function handleMessage(event: SubmitEvent<HTMLFormElement>) {
-        event.preventDefault();
-
-        setHistory((previous) => [
-            ...previous,
-            { role: "user", content: [{ type: "text", text: message }] },
-        ]);
-
-        setMessage("");
-        setMessagePending(true);
-
-        const response = await sendMessage(message).catch(() => undefined);
-
-        if (response) {
-            setHistory((previous) => [...previous, response]);
-        }
-
-        setMessagePending(false);
-    }
-
-    if (!session) {
-        return;
-    }
-
     return (
-        <div className="flex w-full h-screen grow gap-8 p-8">
+        <div className="flex not-lg:flex-col w-full h-screen grow gap-8 p-4 lg:p-8 overflow-hidden">
             <TabViewer tabs={tabs} expires={session.expires} />
-            <Card className="max-w-xl size-full gap-4">
-                <MessageList
-                    messages={history}
-                    messagePending={messagePending}
-                />
-                <form onSubmit={handleMessage} className="flex flex-col">
-                    <TextAreaInput
-                        value={message}
-                        onChange={setMessage}
-                        onKeyDown={(event) => {
-                            if (event.key == "Enter" && !event.shiftKey) {
-                                event.preventDefault();
-                                (
-                                    event.target as HTMLTextAreaElement
-                                ).form?.requestSubmit();
-                            }
-                        }}
-                    />
-                    <Button type="submit" className="mt-1 ml-auto">
-                        Send
-                        <PaperAirplaneIcon className="size-5" />
-                    </Button>
-                </form>
+            <Card className="max-w-xl size-full gap-4 not-lg:hidden">
+                <Chat session={session} />
             </Card>
         </div>
     );
