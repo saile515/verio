@@ -16,9 +16,6 @@ export async function generateReport(session: Session) {
     const result: Report = {
         tabTime: new Array(5).fill(0),
         pastedWords: 0,
-        memo: await gradeMemo(session),
-        behavior: await gradeBehavior(session),
-        verdict: await getVerdict(session),
     };
 
     let activeTab: number | null = null;
@@ -44,6 +41,15 @@ export async function generateReport(session: Session) {
                 break;
         }
     }
+
+    const reportMetrics = {
+        tabTime: result.tabTime,
+        pastedWords: result.pastedWords,
+    };
+
+    result.memo = await gradeMemo(session);
+    result.behavior = await gradeBehavior(session, result.memo);
+    result.verdict = await getVerdict(session, result.behavior, result.memo, reportMetrics);
 
     session.report = result;
 
