@@ -1,0 +1,11 @@
+services:
+    verio:
+        build: .
+    database:
+        image: postgres
+        container_name: verio-database
+        environment:
+            - POSTGRES_USER=verio
+            - POSTGRES_PASSWORD=verio
+        ports:
+            - 54321:5432

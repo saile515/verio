@@ -1,12 +1,11 @@
+import "dotenv/config";
+
 import { createEvent, createSession, sessionMiddleware } from "./sessions.js";
-import express, { Errback, NextFunction, Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import { generateReport } from "./grading/report.js";
 import { userMessage } from "./chat-agent/user-messaging.js";
-
-dotenv.config();
 
 const app = express();
 app.use(cookieParser());
