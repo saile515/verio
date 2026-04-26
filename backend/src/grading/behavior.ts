@@ -36,6 +36,7 @@ export interface SessionMetadata {
     locked: boolean;
     firedInjections: number[];
     totalAiResponses: number;
+    timeBeforeFirstAi: TimeBeforeFirstAi;
     unavailableTelemetry: string[];
 }
 
@@ -114,6 +115,11 @@ export interface BehaviorGrade {
         notablePrompts: PromptQualityPrompt[];
     };
     flags: string[];
+}
+
+interface TimeBeforeFirstAi {
+    score: number | null;
+    elapsedSeconds: number | null;
 }
 
 const nullableNumberSchema = {
@@ -325,6 +331,46 @@ function getTotalAiResponses(events: UserEvent[]) {
     ).length;
 }
 
+function isAiResponse(event: UserEvent) {
+    return (
+        event.type == "assistant-message" ||
+        event.type == "injection-message" ||
+        event.type == "concession-message" ||
+        event.type == "weak-concession-message" ||
+        event.type == "reinforced-assistant-message"
+    );
+}
+
+function getTimeBeforeFirstAi(events: UserEvent[]): TimeBeforeFirstAi {
+    const sessionStart = events.find((event) => event.type == "session-start");
+    const firstAiResponse = events.find(isAiResponse);
+
+    if (!sessionStart || !firstAiResponse) {
+        return {
+            score: null,
+            elapsedSeconds: null,
+        };
+    }
+
+    const elapsedSeconds = Math.max(
+        0,
+        (firstAiResponse.time - sessionStart.time) / 1000,
+    );
+
+    let score = 0;
+
+    if (elapsedSeconds >= 180) {
+        score = 1;
+    } else if (elapsedSeconds >= 60) {
+        score = 0.5;
+    }
+
+    return {
+        score,
+        elapsedSeconds,
+    };
+}
+
 export async function gradeBehavior(session: Session, memoGrade?: MemoGrade) {
     let memoPropagationSummary: MemoGrade["propagation"] | null = null;
 
@@ -334,12 +380,15 @@ export async function gradeBehavior(session: Session, memoGrade?: MemoGrade) {
         memoPropagationSummary = session.report.memo.propagation;
     }
 
+    const timeBeforeFirstAi = getTimeBeforeFirstAi(session.events);
+
     const sessionMetadata: SessionMetadata = {
         created: session.created.toISOString(),
         expires: session.expires.toISOString(),
         locked: session.locked,
         firedInjections: getFiredInjections(session),
         totalAiResponses: getTotalAiResponses(session.events),
+        timeBeforeFirstAi,
         unavailableTelemetry: [
             "scroll-depth",
             "paste-source",
@@ -456,5 +505,11 @@ export async function gradeBehavior(session: Session, memoGrade?: MemoGrade) {
         },
     });
 
-    return response ?? undefined;
+    if (!response) {
+        return undefined;
+    }
+
+    response.timeBeforeFirstAi = timeBeforeFirstAi;
+
+    return response;
 }
