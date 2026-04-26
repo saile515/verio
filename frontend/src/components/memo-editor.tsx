@@ -13,13 +13,18 @@ import {
     toolbarPlugin,
 } from "@mdxeditor/editor";
 import { pasteEvent, submitTest } from "../lib/server";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { Button } from "./button";
 import { useNavigate } from "react-router";
 
-export function MemoEditor() {
-    const [value, setValue] = useState("");
+export function MemoEditor({
+    value,
+    onChange,
+}: {
+    value: string;
+    onChange: (value: string) => void;
+}) {
     const ref = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
@@ -54,8 +59,8 @@ export function MemoEditor() {
         <div className="h-full flex flex-col" ref={ref}>
             <MDXEditor
                 className="dark grow overflow-hidden flex flex-col"
-                markdown=""
-                onChange={setValue}
+                markdown={value}
+                onChange={onChange}
                 contentEditableClassName="h-full overflow-auto"
                 plugins={[
                     toolbarPlugin({

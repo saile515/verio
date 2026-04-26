@@ -31,6 +31,7 @@ export function Test() {
     const [session, setSession] = useState<Session | null>(null);
     const [history, setHistory] = useState<Message[]>([]);
     const [message, setMessage] = useState("");
+    const [memo, setMemo] = useState("");
     const [messagePending, setMessagePending] = useState(false);
 
     useEffect(() => {
@@ -63,7 +64,7 @@ export function Test() {
         },
         {
             tabName: "Memo",
-            content: <MemoEditor />,
+            content: <MemoEditor value={memo} onChange={setMemo} />,
         },
     ];
 

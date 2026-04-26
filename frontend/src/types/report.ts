@@ -44,9 +44,59 @@ export interface MemoGrade {
     flags: string[];
 }
 
-export interface BehaviorGrade {}
+export interface InjectionBehavior {
+    index: number;
+    status: "triggered" | "not-triggered";
+    outcome: string;
+    outcomeScore: number | null;
+    challengeStrength: "none" | "weak" | "valid" | null;
+    confidence: "high" | "medium" | "low";
+}
 
-export interface Verdict {}
+export interface BehaviorGrade {
+    injections: InjectionBehavior[];
+    pasteDependence: {
+        score: number | null;
+        ambiguousPasteCount: number;
+    };
+    timeBeforeFirstAi: {
+        score: number | null;
+        elapsedSeconds: number | null;
+    };
+    promptQuality: {
+        trimmedMean: number | null;
+        maxLevelAchieved: number | null;
+        promptCount: number;
+    };
+    flags: string[];
+}
+
+export interface VerdictDimension {
+    score: number;
+    band: "low" | "developing" | "strong" | "exceptional";
+    evidenceBullets: string[];
+}
+
+export interface Verdict {
+    verdict: "strong-hire" | "hire" | "lean-no-hire" | "no-hire";
+    verdictRationale: string;
+    confidenceScore: number;
+    recoveryFloorTriggered: boolean;
+    patternLabel: string;
+    dimensions: {
+        evidenceDiscipline: VerdictDimension;
+        aiGovernance: VerdictDimension;
+        recoveryUnderError: VerdictDimension & {
+            injectionsTriggered: number;
+            injectionsChallengedValid: number;
+            injectionsPropagated: number;
+        };
+        analyticalJudgment: VerdictDimension;
+    };
+    keyObservations: string[];
+    contradictions: string[];
+    flags: string[];
+}
 
 export interface Report {
     tabTime: number[];
