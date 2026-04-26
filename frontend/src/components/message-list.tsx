@@ -8,7 +8,7 @@ function Message({ message }: { message: Message }) {
     const content = message.content.map(({ text }) => text).join("");
 
     return (
-        <li className={isUser ? "ml-auto text-right" : ""}>
+        <li className={isUser ? "ml-auto" : ""}>
             <div>{isUser ? "You" : "Verio"}</div>
             <div
                 className={`${isUser ? "bg-stone-50 text-stone-900 rounded-tr-none" : "bg-stone-700 rounded-tl-none"} px-4 py-2 rounded-lg`}>
