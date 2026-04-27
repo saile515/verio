@@ -127,7 +127,7 @@ export function Report() {
         getReport().then(setReport);
     }, []);
 
-    if (true || !report?.memo?.quality) {
+    if (!report?.memo?.quality) {
         return (
             <div className="p-8 h-screen flex items-center justify-center">
                 <Card className="gap-2">
