@@ -1,15 +1,15 @@
-import { grade, populateUserPrompt } from "./util.js";
-import { MemoGrade } from "./memo.js";
-
 import {
+    Message,
+    Session,
+    SessionTelemetryEvent,
     getFiredInjectionIndexes,
     getTotalAiResponses,
     isAiResponseEvent,
     isSessionTelemetryEvent,
-    Message,
-    Session,
-    SessionTelemetryEvent,
 } from "../sessions.js";
+import { grade, populateUserPrompt } from "./util.js";
+
+import { MemoGrade } from "./memo.js";
 import { loadSystemPrompt } from "../system-prompts/util.js";
 
 const agentPrompt = loadSystemPrompt("grading-behavior");
@@ -224,9 +224,7 @@ const promptQualityPromptSchema = {
 };
 
 function textFromContent(content: Message["content"]) {
-    return content
-        .map((block) => ("text" in block ? block.text : ""))
-        .join("");
+    return content.map((block) => ("text" in block ? block.text : "")).join("");
 }
 
 function toConversationLog(events: Session["events"]): ConversationLogEntry[] {
@@ -344,14 +342,6 @@ function getTimeBeforeFirstAi(events: Session["events"]): TimeBeforeFirstAi {
 }
 
 export async function gradeBehavior(session: Session, memoGrade?: MemoGrade) {
-    let memoPropagationSummary: MemoGrade["propagation"] | null = null;
-
-    if (memoGrade) {
-        memoPropagationSummary = memoGrade.propagation;
-    } else if (session.report?.memo) {
-        memoPropagationSummary = session.report.memo.propagation;
-    }
-
     const timeBeforeFirstAi = getTimeBeforeFirstAi(session.events);
 
     const sessionMetadata: BehaviorSessionMetadata = {
@@ -372,11 +362,9 @@ export async function gradeBehavior(session: Session, memoGrade?: MemoGrade) {
         conversationLog: JSON.stringify(toConversationLog(session.events)),
         eventLog: JSON.stringify(toEventLog(session.events)),
         sessionMetadata: JSON.stringify(sessionMetadata),
-        memoGrade: JSON.stringify(
-            memoPropagationSummary
-                ? { propagation: memoPropagationSummary }
-                : null,
-        ),
+        memoGrade: memoGrade
+            ? JSON.stringify({ propagation: memoGrade.propagation })
+            : "null",
     });
 
     const response = await grade<BehaviorGrade>({

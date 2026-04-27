@@ -82,9 +82,9 @@ app.get("/report", sessionMiddleware, async (request, response) => {
         return;
     }
 
-    response.send(
-        request.session.report ?? (await generateReport(request.session)),
-    );
+    request.session.reportPromise ??= generateReport(request.session);
+
+    response.send(await request.session.reportPromise);
 });
 
 app.listen(port, () => {

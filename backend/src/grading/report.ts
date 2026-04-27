@@ -49,9 +49,12 @@ export async function generateReport(session: Session) {
 
     result.memo = await gradeMemo(session);
     result.behavior = await gradeBehavior(session, result.memo);
-    result.verdict = await getVerdict(session, result.behavior, result.memo, reportMetrics);
-
-    session.report = result;
+    result.verdict = await getVerdict(
+        session,
+        result.behavior,
+        result.memo,
+        reportMetrics,
+    );
 
     return result;
 }

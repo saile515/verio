@@ -95,7 +95,7 @@ export const propagationSchema = {
 };
 
 export async function gradeMemo(session: Session) {
-    if (!session.memo) {
+    if (!session.memo!) {
         return undefined;
     }
 

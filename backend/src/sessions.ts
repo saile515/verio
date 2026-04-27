@@ -123,7 +123,7 @@ export interface Session {
     locked: boolean;
     injectionState: InjectionState[];
     memo?: string;
-    report?: Report;
+    reportPromise?: Promise<Report>;
 }
 
 export function isMessageEvent(event: UserEvent): event is MessageEvent {
