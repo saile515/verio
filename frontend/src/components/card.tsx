@@ -9,7 +9,7 @@ export function Card({
 }) {
     return (
         <div
-            className={`${className} bg-stone-800 rounded-2xl border border-stone-700 p-8 flex flex-col`}>
+            className={`${className} bg-stone-800 rounded-2xl border border-stone-700 p-4 lg:p-8 flex flex-col`}>
             {children}
         </div>
     );

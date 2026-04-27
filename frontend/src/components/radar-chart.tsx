@@ -62,7 +62,7 @@ export function RadarChart({
     });
 
     return (
-        <svg width={size * 1.5} height={size} viewBox={`0 0 ${size} ${size}`}>
+        <svg width={size * 2} height={size} viewBox={`0 0 ${size} ${size}`}>
             {/* Grid */}
             {gridPolygons.map((points, i) => (
                 <polygon
@@ -125,7 +125,7 @@ export function RadarChart({
                             y={y - 4}
                             textAnchor={textAnchor}
                             fill="var(--color-stone-300)"
-                            fontSize={12}
+                            fontSize={10}
                             fontWeight="600">
                             {label}
                         </text>

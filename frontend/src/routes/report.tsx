@@ -15,7 +15,7 @@ function Criteria({ metric, label }: { metric: Criteria; label: string }) {
             <div className="flex items-center mb-2">
                 <h2 className="text-xl">{label}</h2>
                 <div
-                    className="ml-auto size-12 p-1 rounded-full shrink-0 -mt-4"
+                    className="ml-auto size-12 p-1 rounded-full shrink-0 -mt-2 lg:-mt-4"
                     style={{
                         background: `conic-gradient(var(--color-lime-200) ${metric.result.score * 100}%, var(--color-stone-900) ${metric.result.score * 100}%)`,
                     }}>
@@ -134,8 +134,6 @@ function BehaviorSummary({ report }: { report: Report }) {
 export function Report() {
     const [report, setReport] = useState<Report | null>(null);
 
-    console.log(report);
-
     useEffect(() => {
         getReport().then(setReport);
     }, []);
@@ -145,9 +143,10 @@ export function Report() {
     }
 
     return (
-        <div className="flex flex-col mx-auto p-8">
-            <div className="mx-auto w-fit">
+        <div className="flex flex-col mx-auto p-4 lg:p-8">
+            <div className="w-full justify-center flex">
                 <RadarChart
+                    size={window.innerWidth < 1024 ? 200 : 400}
                     metrics={[
                         {
                             label: "Factual correctness",
@@ -172,7 +171,7 @@ export function Report() {
                     ]}
                 />
             </div>
-            <div className="grid grid-cols-2 gap-4 mx-auto mt-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mx-auto mt-8">
                 <Criteria
                     metric={report.memo.quality.factualCorrectness}
                     label="Factual correctness"
