@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card } from "../components/card";
 import { RadarChart } from "../components/radar-chart";
 import { getReport } from "../lib/server";
-import type { Criteria, Report } from "../types/report";
+import type { BehaviorGrade, Criteria, Report, Verdict } from "../types/report";
 
 function formatScore(score: number | null) {
     return score == null ? "N/A" : (Math.round(score * 100) / 100).toString();
@@ -11,7 +11,7 @@ function formatScore(score: number | null) {
 
 function Criteria({ metric, label }: { metric: Criteria; label: string }) {
     return (
-        <Card className="max-w-lg">
+        <Card>
             <div className="flex items-center mb-2">
                 <h2 className="text-xl">{label}</h2>
                 <div
@@ -29,15 +29,9 @@ function Criteria({ metric, label }: { metric: Criteria; label: string }) {
     );
 }
 
-function VerdictSummary({ report }: { report: Report }) {
-    if (!report.verdict) {
-        return null;
-    }
-
-    const { verdict } = report;
-
+function VerdictSummary({ verdict }: { verdict: Verdict }) {
     return (
-        <Card className="max-w-lg">
+        <Card className="col-span-2">
             <h2 className="text-xl mb-2">Verdict</h2>
             <div className="text-lime-200 font-bold text-2xl mb-2">
                 {verdict.verdict}
@@ -75,18 +69,13 @@ function VerdictSummary({ report }: { report: Report }) {
     );
 }
 
-function BehaviorSummary({ report }: { report: Report }) {
-    if (!report.behavior) {
-        return null;
-    }
-
-    const { behavior } = report;
+function BehaviorSummary({ behavior }: { behavior: BehaviorGrade }) {
     const triggeredInjections = behavior.injections.filter(
         (injection) => injection.status == "triggered",
     );
 
     return (
-        <Card className="max-w-lg">
+        <Card className="col-span-2">
             <h2 className="text-xl mb-2">Behavior</h2>
             <div className="grid grid-cols-2 gap-2 text-sm mb-4">
                 <div>
@@ -138,8 +127,24 @@ export function Report() {
         getReport().then(setReport);
     }, []);
 
-    if (!report?.memo?.quality) {
-        return <div className="p-8">Loading report</div>;
+    if (true || !report?.memo?.quality) {
+        return (
+            <div className="p-8 h-screen flex items-center justify-center">
+                <Card className="gap-2">
+                    <div className="flex items-end gap-2 text-2xl">
+                        <div className="leading-none">Loading report</div>
+                        <div className="flex gap-1.5">
+                            <div className="size-2 rounded-full animate-bounce bg-lime-200 [animation-delay:-0.3s]" />
+                            <div className="size-2 rounded-full animate-bounce bg-lime-200 [animation-delay:-0.15s]" />
+                            <div className="size-2 rounded-full animate-bounce bg-lime-200" />
+                        </div>
+                    </div>
+                    <div className="text-stone-400">
+                        This can take a few minutes
+                    </div>
+                </Card>
+            </div>
+        );
     }
 
     return (
@@ -171,7 +176,7 @@ export function Report() {
                     ]}
                 />
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mx-auto mt-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mx-auto mt-8 max-w-5xl">
                 <Criteria
                     metric={report.memo.quality.factualCorrectness}
                     label="Factual correctness"
@@ -188,10 +193,10 @@ export function Report() {
                     metric={report.memo.quality.tradeoffHandling}
                     label="Trade-off handling"
                 />
-            </div>
-            <div className="grid grid-cols-2 gap-4 mx-auto mt-4">
-                <VerdictSummary report={report} />
-                <BehaviorSummary report={report} />
+                {report.behavior && (
+                    <BehaviorSummary behavior={report.behavior} />
+                )}
+                {report.verdict && <VerdictSummary verdict={report.verdict} />}
             </div>
         </div>
     );
