@@ -1,8 +1,15 @@
 import { grade, populateUserPrompt } from "./util.js";
 import { MemoGrade } from "./memo.js";
 
-import { ContentBlockParam } from "@anthropic-ai/sdk/resources";
-import { Session, UserEvent } from "../sessions.js";
+import {
+    getFiredInjectionIndexes,
+    getTotalAiResponses,
+    isAiResponseEvent,
+    isSessionTelemetryEvent,
+    Message,
+    Session,
+    SessionTelemetryEvent,
+} from "../sessions.js";
 import { loadSystemPrompt } from "../system-prompts/util.js";
 
 const agentPrompt = loadSystemPrompt("grading-behavior");
@@ -23,14 +30,14 @@ export interface ConversationLogEntry {
     injectionIndex?: number;
 }
 
-export interface TelemetryEvent {
+export interface TelemetryLogEntry {
     timestamp: number;
-    eventType: "session-start" | "session-end" | "tab-switch" | "paste";
+    eventType: SessionTelemetryEvent["type"];
     tab?: number;
     wordCount?: number;
 }
 
-export interface SessionMetadata {
+export interface BehaviorSessionMetadata {
     created: string;
     expires: string;
     locked: boolean;
@@ -70,7 +77,7 @@ export interface ExhibitReopen {
     dwellSeconds: number | null;
 }
 
-export interface PasteEvent {
+export interface BehaviorPasteEvent {
     timestamp: number;
     source: "chat" | "exhibit" | "ambiguous";
     wordCount: number;
@@ -95,7 +102,7 @@ export interface BehaviorGrade {
         chatToMemoPasteCount: number | null;
         exhibitToMemoPasteCount: number | null;
         ambiguousPasteCount: number;
-        pasteEvents: PasteEvent[];
+        pasteEvents: BehaviorPasteEvent[];
     };
     timeBeforeFirstAi: {
         score: number | null;
@@ -216,13 +223,13 @@ const promptQualityPromptSchema = {
     required: ["timestamp", "level", "content", "reason"],
 };
 
-function textFromContent(content: ContentBlockParam[]) {
+function textFromContent(content: Message["content"]) {
     return content
         .map((block) => ("text" in block ? block.text : ""))
         .join("");
 }
 
-function toConversationLog(events: UserEvent[]): ConversationLogEntry[] {
+function toConversationLog(events: Session["events"]): ConversationLogEntry[] {
     return events.flatMap<ConversationLogEntry>((event) => {
         switch (event.type) {
             case "user-message":
@@ -283,67 +290,32 @@ function toConversationLog(events: UserEvent[]): ConversationLogEntry[] {
     });
 }
 
-function toEventLog(events: UserEvent[]): TelemetryEvent[] {
-    return events.flatMap<TelemetryEvent>((event) => {
+function toEventLog(events: Session["events"]): TelemetryLogEntry[] {
+    return events.filter(isSessionTelemetryEvent).map((event) => {
         switch (event.type) {
             case "session-start":
-                return [{ timestamp: event.time, eventType: event.type }];
+                return { timestamp: event.time, eventType: event.type };
             case "session-end":
-                return [{ timestamp: event.time, eventType: event.type }];
+                return { timestamp: event.time, eventType: event.type };
             case "tab-switch":
-                return [
-                    {
-                        timestamp: event.time,
-                        eventType: event.type,
-                        tab: event.tab,
-                    },
-                ];
+                return {
+                    timestamp: event.time,
+                    eventType: event.type,
+                    tab: event.tab,
+                };
             case "paste":
-                return [
-                    {
-                        timestamp: event.time,
-                        eventType: event.type,
-                        wordCount: event.wordCount,
-                    },
-                ];
-            default:
-                return [];
+                return {
+                    timestamp: event.time,
+                    eventType: event.type,
+                    wordCount: event.wordCount,
+                };
         }
     });
 }
 
-function getFiredInjections(session: Session) {
-    return session.injectionState
-        .map((injection, index) => ({ index, injection }))
-        .filter(({ injection }) => injection.fired)
-        .map(({ index }) => index);
-}
-
-function getTotalAiResponses(events: UserEvent[]) {
-    return events.filter((event) =>
-        [
-            "assistant-message",
-            "injection-message",
-            "concession-message",
-            "weak-concession-message",
-            "reinforced-assistant-message",
-        ].includes(event.type),
-    ).length;
-}
-
-function isAiResponse(event: UserEvent) {
-    return (
-        event.type == "assistant-message" ||
-        event.type == "injection-message" ||
-        event.type == "concession-message" ||
-        event.type == "weak-concession-message" ||
-        event.type == "reinforced-assistant-message"
-    );
-}
-
-function getTimeBeforeFirstAi(events: UserEvent[]): TimeBeforeFirstAi {
+function getTimeBeforeFirstAi(events: Session["events"]): TimeBeforeFirstAi {
     const sessionStart = events.find((event) => event.type == "session-start");
-    const firstAiResponse = events.find(isAiResponse);
+    const firstAiResponse = events.find(isAiResponseEvent);
 
     if (!sessionStart || !firstAiResponse) {
         return {
@@ -382,11 +354,11 @@ export async function gradeBehavior(session: Session, memoGrade?: MemoGrade) {
 
     const timeBeforeFirstAi = getTimeBeforeFirstAi(session.events);
 
-    const sessionMetadata: SessionMetadata = {
+    const sessionMetadata: BehaviorSessionMetadata = {
         created: session.created.toISOString(),
         expires: session.expires.toISOString(),
         locked: session.locked,
-        firedInjections: getFiredInjections(session),
+        firedInjections: getFiredInjectionIndexes(session),
         totalAiResponses: getTotalAiResponses(session.events),
         timeBeforeFirstAi,
         unavailableTelemetry: [

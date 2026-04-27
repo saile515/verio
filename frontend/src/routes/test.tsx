@@ -30,7 +30,6 @@ const files = [
 function Chat({ session }: { session: Session }) {
     const [history, setHistory] = useState<Message[]>(session.messages);
     const [message, setMessage] = useState("");
-    const [memo, setMemo] = useState("");
     const [messagePending, setMessagePending] = useState(false);
 
     async function handleMessage(event: SubmitEvent<HTMLFormElement>) {
@@ -80,6 +79,7 @@ function Chat({ session }: { session: Session }) {
 
 export function Test() {
     const [session, setSession] = useState<Session | null>(null);
+    const [memo, setMemo] = useState("");
 
     useEffect(() => {
         getSession().then((session) => {

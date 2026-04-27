@@ -36,48 +36,48 @@ export interface TabSwitchEvent extends BaseUserEvent {
     tab: number;
 }
 
+export interface Message {
+    role: "user" | "assistant";
+    content: ContentBlockParam[];
+}
+
 export interface UserMessageEvent extends BaseUserEvent {
     type: "user-message";
-    message: ContentBlockParam[];
+    message: Message["content"];
 }
 
 export interface AssistantMessageEvent extends BaseUserEvent {
     type: "assistant-message";
-    message: ContentBlockParam[];
+    message: Message["content"];
 }
 
 export interface ReinforcedAssistantMessageEvent extends BaseUserEvent {
     type: "reinforced-assistant-message";
-    message: ContentBlockParam[];
+    message: Message["content"];
     index: number;
 }
 
 export interface InjectionMessageEvent extends BaseUserEvent {
     type: "injection-message";
-    message: ContentBlockParam[];
+    message: Message["content"];
     index: number;
 }
 
 export interface ConcessionMessageEvent extends BaseUserEvent {
     type: "concession-message";
-    message: ContentBlockParam[];
+    message: Message["content"];
     index: number;
 }
 
 export interface WeakConcessionMessageEvent extends BaseUserEvent {
     type: "weak-concession-message";
-    message: ContentBlockParam[];
+    message: Message["content"];
     index: number;
 }
 
 export interface PasteEvent extends BaseUserEvent {
     type: "paste";
     wordCount: number;
-}
-
-export interface Message {
-    role: "user" | "assistant";
-    content: ContentBlockParam[];
 }
 
 export type UserEvent =
@@ -92,6 +92,27 @@ export type UserEvent =
     | WeakConcessionMessageEvent
     | PasteEvent;
 
+export type MessageEvent =
+    | UserMessageEvent
+    | AssistantMessageEvent
+    | ReinforcedAssistantMessageEvent
+    | InjectionMessageEvent
+    | ConcessionMessageEvent
+    | WeakConcessionMessageEvent;
+
+export type AiResponseEvent =
+    | AssistantMessageEvent
+    | ReinforcedAssistantMessageEvent
+    | InjectionMessageEvent
+    | ConcessionMessageEvent
+    | WeakConcessionMessageEvent;
+
+export type SessionTelemetryEvent =
+    | SessionStartEvent
+    | SessionEndEvent
+    | TabSwitchEvent
+    | PasteEvent;
+
 export interface Session {
     created: Date;
     expires: Date;
@@ -103,6 +124,42 @@ export interface Session {
     injectionState: InjectionState[];
     memo?: string;
     report?: Report;
+}
+
+export function isMessageEvent(event: UserEvent): event is MessageEvent {
+    return "message" in event;
+}
+
+export function isAiResponseEvent(event: UserEvent): event is AiResponseEvent {
+    return (
+        event.type == "assistant-message" ||
+        event.type == "injection-message" ||
+        event.type == "concession-message" ||
+        event.type == "weak-concession-message" ||
+        event.type == "reinforced-assistant-message"
+    );
+}
+
+export function isSessionTelemetryEvent(
+    event: UserEvent,
+): event is SessionTelemetryEvent {
+    return (
+        event.type == "session-start" ||
+        event.type == "session-end" ||
+        event.type == "tab-switch" ||
+        event.type == "paste"
+    );
+}
+
+export function getTotalAiResponses(events: Session["events"]) {
+    return events.filter(isAiResponseEvent).length;
+}
+
+export function getFiredInjectionIndexes(session: Session) {
+    return session.injectionState
+        .map((injection, index) => ({ index, injection }))
+        .filter(({ injection }) => injection.fired)
+        .map(({ index }) => index);
 }
 
 const sessions: Record<string, Session> = {};

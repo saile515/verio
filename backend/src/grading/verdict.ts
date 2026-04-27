@@ -2,7 +2,11 @@ import { BehaviorGrade } from "./behavior.js";
 import { MemoGrade } from "./memo.js";
 import { grade, populateUserPrompt } from "./util.js";
 
-import { Session, UserEvent } from "../sessions.js";
+import {
+    getFiredInjectionIndexes,
+    getTotalAiResponses,
+    Session,
+} from "../sessions.js";
 import { loadSystemPrompt } from "../system-prompts/util.js";
 
 const agentPrompt = loadSystemPrompt("grading-verdict");
@@ -135,48 +139,12 @@ const recoveryDimensionSchema = {
     ],
 };
 
-function getFiredInjections(session: Session) {
-    const firedInjections: number[] = [];
-
-    for (let index = 0; index < session.injectionState.length; index++) {
-        const injection = session.injectionState[index];
-
-        if (injection.fired) {
-            firedInjections.push(index);
-        }
-    }
-
-    return firedInjections;
-}
-
-function isAiResponse(event: UserEvent) {
-    return (
-        event.type == "assistant-message" ||
-        event.type == "injection-message" ||
-        event.type == "concession-message" ||
-        event.type == "weak-concession-message" ||
-        event.type == "reinforced-assistant-message"
-    );
-}
-
-function getTotalAiResponses(events: UserEvent[]) {
-    let totalAiResponses = 0;
-
-    for (const event of events) {
-        if (isAiResponse(event)) {
-            totalAiResponses++;
-        }
-    }
-
-    return totalAiResponses;
-}
-
 function getSessionMetadata(session: Session): VerdictSessionMetadata {
     return {
         created: session.created.toISOString(),
         expires: session.expires.toISOString(),
         locked: session.locked,
-        firedInjections: getFiredInjections(session),
+        firedInjections: getFiredInjectionIndexes(session),
         totalEvents: session.events.length,
         totalAiResponses: getTotalAiResponses(session.events),
     };
